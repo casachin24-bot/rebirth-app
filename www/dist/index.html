@@ -1,0 +1,1060 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="Re-birth — Your hourly productivity companion with 4-7-8 breathing. Plan, breathe, focus, track every hour.">
+    <meta name="theme-color" content="#08080f">
+    <!-- apple meta removed for Capacitor -->
+
+
+    <title>Re-birth</title>
+    <!-- manifest removed for Capacitor -->
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Browser Chrome removed for Capacitor -->
+
+</div>
+    <div id="app">
+
+        <!-- Background particles -->
+        <div id="particles-container" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:0;"></div>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Dashboard                       -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-dashboard" class="screen active">
+            <header class="screen-header">
+                <div class="greeting">
+                    <h1 id="greeting-text">Good Morning</h1>
+                    <p id="greeting-date" class="subtitle"></p>
+                    <p id="live-clock" class="live-clock"></p>
+                    <span id="freshstart-day-count" class="freshstart-badge">Day 1</span>
+                </div>
+                <button id="btn-settings" class="icon-btn" aria-label="Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </header>
+
+            <!-- Today's Stats Card -->
+            <div class="stats-card glass-card">
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                            <span class="stat-value" id="stat-productivity">—</span>
+                        </div>
+                        <span class="stat-label">Productivity</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                            <span class="stat-value" id="stat-blocks">0</span>
+                        </div>
+                        <span class="stat-label">Blocks</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            <span class="stat-value" id="stat-focus">0h</span>
+                        </div>
+                        <span class="stat-label">Focus</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current/Active Block -->
+            <div id="active-block-card" class="glass-card active-block hidden">
+                <div class="active-block-header">
+                    <span class="active-phase-badge" id="active-phase-badge">FOCUS</span>
+                    <span class="active-timer" id="active-timer">42:18</span>
+                </div>
+                <p class="active-task" id="active-task-text">—</p>
+                <button id="btn-resume-block" class="btn-primary btn-sm">Resume →</button>
+            </div>
+
+            <!-- Welcome Back (shown only after a gap — never guilt-based) -->
+            <div id="welcome-back-card" class="glass-card welcome-back-card hidden">
+                <p id="welcome-back-text"></p>
+            </div>
+
+            <!-- If-Then Lapse Plan nudge (only shown when a gap is detected, dismissible) -->
+            <div id="ifthen-nudge-card" class="glass-card ifthen-nudge-card hidden">
+                <p id="ifthen-nudge-text"></p>
+                <button id="btn-dismiss-ifthen" class="btn-ghost btn-sm">Got it</button>
+            </div>
+
+            <!-- Streaks: Opens (showing up) + Completion (finishing blocks) -->
+            <div class="streaks-row">
+                <div class="glass-card streak-card">
+                    <span class="streak-icon">🚪</span>
+                    <span class="streak-value" id="opens-streak-value">0</span>
+                    <span class="streak-label" id="opens-streak-label">Show up today</span>
+                </div>
+                <div class="glass-card streak-card">
+                    <span class="streak-icon">🔥</span>
+                    <span class="streak-value" id="completion-streak-value">0</span>
+                    <span class="streak-label" id="completion-streak-label">Complete one to start</span>
+                </div>
+            </div>
+
+            <!-- Rank Dashboard -->
+            <div id="rank-dashboard" class="glass-card rank-dashboard-card"></div>
+
+            <!-- Daily Plan -->
+            <div class="section-header">
+                <h2>Today's Plan</h2>
+            </div>
+            <div id="daily-plan-container" class="glass-card" style="padding:var(--space-sm) var(--space-md)"></div>
+
+            <!-- Today's Motion (Progress Principle) -->
+            <div class="glass-card todays-motion-card">
+                <div class="todays-motion-header">
+                    <span>Today's motion</span>
+                </div>
+                <div class="todays-motion-track">
+                    <div id="todays-motion-fill" class="todays-motion-fill" style="width:0%"></div>
+                </div>
+            </div>
+
+            <!-- Category Budgets (Today) -->
+            <div class="section-header">
+                <h2>Today by Category</h2>
+            </div>
+            <div id="category-budgets-list" class="glass-card category-budgets-card"></div>
+
+            <!-- Foundations Checklist -->
+            <div class="section-header">
+                <h2>Foundations</h2>
+            </div>
+            <div id="foundations-list" class="glass-card foundations-card"></div>
+
+            <!-- Today's Blocks List -->
+            <div class="section-header">
+                <h2>Today's Blocks</h2>
+            </div>
+            <div id="blocks-list" class="blocks-list">
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">🌅</div>
+                    <p class="empty-title">Your day is a blank canvas</p>
+                    <p class="empty-subtitle">Start your first focus block and build momentum.</p>
+                </div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="bottom-actions">
+                <button id="btn-start-block" class="btn-primary btn-glow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                    Start New Block
+                </button>
+            </div>
+
+    </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Plan                            -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-plan" class="screen">
+            <header class="screen-header">
+                <button class="icon-btn back-btn" data-back="dashboard" aria-label="Go back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <h1>New Block</h1>
+                <div style="width:40px"></div>
+            </header>
+
+            <div class="ritual-stepper">
+                <div class="ritual-step active">
+                    <div class="ritual-step-dot">1</div>
+                    <span class="ritual-step-label">Plan</span>
+                </div>
+                <div class="ritual-step-line"></div>
+                <div class="ritual-step">
+                    <div class="ritual-step-dot">2</div>
+                    <span class="ritual-step-label">Breathe</span>
+                </div>
+                <div class="ritual-step-line"></div>
+                <div class="ritual-step">
+                    <div class="ritual-step-dot">3</div>
+                    <span class="ritual-step-label">Focus</span>
+                </div>
+            </div>
+
+            <div class="plan-content">
+                <div class="plan-time-display">
+                    <span id="plan-current-time" class="plan-time">--:--</span>
+                    <span class="plan-time-label">Starting now</span>
+                </div>
+
+                <div class="input-group glass-card">
+                    <label for="task-input" class="input-label">What will you commit to?</label>
+                    <textarea id="task-input" class="task-input" placeholder="I will focus on..." rows="3" maxlength="200"></textarea>
+                    <span class="char-count"><span id="char-count">0</span>/200</span>
+                </div>
+
+                <div class="category-group">
+                    <label class="input-label">Category</label>
+                    <div class="category-options">
+                        <button class="category-chip" data-category="study">📚 Study</button>
+                        <button class="category-chip" data-category="work">💼 Work</button>
+                        <button class="category-chip" data-category="personal">🌱 Personal</button>
+                        <button class="category-chip" data-category="other">✳️ Other</button>
+                    </div>
+                </div>
+
+                <div class="duration-group">
+                    <label class="input-label">Block Duration</label>
+                    <div class="duration-options">
+                        <button class="duration-btn tiny-start-btn" data-duration="tiny">
+                            <span class="dur-value">10</span>
+                            <span class="dur-unit">min · just start something small</span>
+                        </button>
+                    </div>
+                    <div class="duration-options">
+                        <button class="duration-btn break-btn" data-duration="20">
+                            <span class="dur-value">20</span>
+                            <span class="dur-unit">min · short break</span>
+                        </button>
+                        <button class="duration-btn break-btn" data-duration="30">
+                            <span class="dur-value">30</span>
+                            <span class="dur-unit">min · break</span>
+                        </button>
+                    </div>
+                    <div class="duration-options">
+                        <button class="duration-btn active" data-duration="1">
+                            <span class="dur-value">1</span>
+                            <span class="dur-unit">hour</span>
+                        </button>
+                        <button class="duration-btn" data-duration="2">
+                            <span class="dur-value">2</span>
+                            <span class="dur-unit">hours</span>
+                        </button>
+                        <button class="duration-btn" data-duration="3">
+                            <span class="dur-value">3</span>
+                            <span class="dur-unit">hours</span>
+                        </button>
+                        <button class="duration-btn" data-duration="4">
+                            <span class="dur-value">4</span>
+                            <span class="dur-unit">hours</span>
+                        </button>
+                    </div>
+                    <p class="duration-breakdown" id="duration-breakdown">
+                        📝 2min Plan → 🫁 5min Breathe → 🎯 50min Focus
+                    </p>
+                </div>
+
+                <button id="btn-begin-breathing" class="btn-primary btn-glow btn-lg" disabled>
+                    Begin Breathing →
+                </button>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Breathe                         -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-breathe" class="screen">
+            <header class="screen-header breathe-header">
+                <div class="breathe-meta">
+                    <span class="breathe-remaining" id="breathe-time-remaining">5:00</span>
+                    <span class="breathe-remaining-label">remaining</span>
+                </div>
+            </header>
+
+            <div class="ritual-stepper">
+                <div class="ritual-step completed">
+                    <div class="ritual-step-dot">✓</div>
+                    <span class="ritual-step-label">Plan</span>
+                </div>
+                <div class="ritual-step-line completed"></div>
+                <div class="ritual-step active">
+                    <div class="ritual-step-dot">2</div>
+                    <span class="ritual-step-label">Breathe</span>
+                </div>
+                <div class="ritual-step-line"></div>
+                <div class="ritual-step">
+                    <div class="ritual-step-dot">3</div>
+                    <span class="ritual-step-label">Focus</span>
+                </div>
+            </div>
+
+            <div class="breathe-content">
+                <!-- Breathing circle (reused from original) -->
+                <div id="breathing-container">
+                    <div id="outer-ring">
+                        <svg id="progress-ring" viewBox="0 0 300 300">
+                            <circle class="progress-bg" cx="150" cy="150" r="140"/>
+                            <circle id="progress-circle" class="progress-fg" cx="150" cy="150" r="140"/>
+                        </svg>
+                    </div>
+                    <div id="breathing-circle">
+                        <div id="glow-ring"></div>
+                        <div id="inner-circle">
+                            <div id="phase-label">INHALE</div>
+                            <div id="countdown">4</div>
+                            <div id="instruction">Breathe in slowly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase dots -->
+                <div id="phase-dots">
+                    <div class="phase-dot active" data-phase="inhale">
+                        <span class="dot"></span>
+                        <span class="dot-label">Inhale</span>
+                    </div>
+                    <div class="phase-dot" data-phase="hold">
+                        <span class="dot"></span>
+                        <span class="dot-label">Hold</span>
+                    </div>
+                    <div class="phase-dot" data-phase="exhale">
+                        <span class="dot"></span>
+                        <span class="dot-label">Exhale</span>
+                    </div>
+                </div>
+
+                <div class="breathe-next-task glass-card">
+                    <span class="next-label">Next up</span>
+                    <span class="next-task" id="breathe-next-task">—</span>
+                    <span class="next-duration" id="breathe-next-duration">50 min focus</span>
+                </div>
+            </div>
+
+            <button id="btn-skip-breathing" class="btn-ghost">Skip Breathing →</button>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Pre-Focus Gate                  -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-prefocus" class="screen">
+            <div class="prefocus-content">
+                <div class="prefocus-task glass-card">
+                    <span class="prefocus-task-label">About to focus on</span>
+                    <p id="prefocus-task-text" class="prefocus-task-name">—</p>
+                </div>
+
+                <p class="prefocus-prompt">Phone elsewhere. Distractions silenced.<br>Begin when ready.</p>
+                <p id="prefocus-why" class="prefocus-why" style="display:none;"></p>
+
+                <button id="btn-prefocus-ready" class="btn-primary btn-glow btn-lg">Ready to begin →</button>
+                <button id="btn-prefocus-notyet" class="btn-ghost">Not yet, give me a minute</button>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Focus                           -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-focus" class="screen">
+            <div class="focus-content">
+                <button id="btn-mind-wandered" class="wander-btn" aria-label="Mind wandered">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+                    <span id="wander-count-badge" class="wander-badge" style="display:none;">0</span>
+                </button>
+
+                <div class="ritual-stepper">
+                    <div class="ritual-step completed">
+                        <div class="ritual-step-dot">✓</div>
+                        <span class="ritual-step-label">Plan</span>
+                    </div>
+                    <div class="ritual-step-line completed"></div>
+                    <div class="ritual-step completed">
+                        <div class="ritual-step-dot">✓</div>
+                        <span class="ritual-step-label">Breathe</span>
+                    </div>
+                    <div class="ritual-step-line completed"></div>
+                    <div class="ritual-step active">
+                        <div class="ritual-step-dot">3</div>
+                        <span class="ritual-step-label">Focus</span>
+                    </div>
+                </div>
+
+                <div class="focus-phase-label">🎯 FOCUS MODE</div>
+
+                <div class="focus-timer-ring glass-card">
+                    <svg class="focus-ring-svg" viewBox="0 0 200 200">
+                        <circle class="focus-ring-bg" cx="100" cy="100" r="90"/>
+                        <circle id="focus-ring-progress" class="focus-ring-fg" cx="100" cy="100" r="90"/>
+                    </svg>
+                    <div class="focus-timer-text">
+                        <span id="focus-time-remaining" class="focus-time">50:00</span>
+                        <span class="focus-time-label">remaining</span>
+                    </div>
+                </div>
+
+                <div class="focus-task glass-card">
+                    <p id="focus-task-text" class="focus-task-name">—</p>
+                </div>
+
+                <div class="focus-actions">
+                    <button id="btn-pause-focus" class="btn-ghost">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                        Pause
+                    </button>
+                    <button id="btn-end-early" class="btn-ghost btn-danger">End Early</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Rate                            -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-rate" class="screen">
+            <div class="rate-content">
+                <div class="rate-icon">✅</div>
+                <h1 class="rate-title">Block Complete!</h1>
+
+                <div class="rate-task-info glass-card">
+                    <p class="rate-task-name" id="rate-task-name">—</p>
+                    <p class="rate-task-duration" id="rate-task-duration">1 hour</p>
+                </div>
+
+                <div class="rate-slider-group">
+                    <label class="input-label">How was this block?</label>
+                    <div class="rate-display">
+                        <span id="rate-emoji" class="rate-emoji">😐</span>
+                        <span id="rate-value" class="rate-value">Neutral</span>
+                    </div>
+                    <div class="sentiment-bar-container">
+                        <div class="sentiment-bar-track" id="sentiment-bar-track">
+                            <div class="sentiment-bar-negative"></div>
+                            <div class="sentiment-bar-center-line"></div>
+                            <div class="sentiment-bar-positive"></div>
+                            <div class="sentiment-bar-fill" id="sentiment-bar-fill"></div>
+                        </div>
+                        <input type="range" id="productivity-slider" class="sentiment-slider" min="-5" max="5" value="0" step="1">
+                    </div>
+                    <div class="sentiment-ticks">
+                        <span class="sentiment-tick negative">💀</span>
+                        <span class="sentiment-tick negative">😡</span>
+                        <span class="sentiment-tick negative">😕</span>
+                        <span class="sentiment-tick negative">😒</span>
+                        <span class="sentiment-tick negative">😐</span>
+                        <span class="sentiment-tick neutral">⚖️</span>
+                        <span class="sentiment-tick positive">🙂</span>
+                        <span class="sentiment-tick positive">😊</span>
+                        <span class="sentiment-tick positive">💪</span>
+                        <span class="sentiment-tick positive">🔥</span>
+                        <span class="sentiment-tick positive">🚀</span>
+                    </div>
+                    <div class="rate-labels">
+                        <span class="rate-label-negative">Unproductive</span>
+                        <span class="rate-label-positive">Productive</span>
+                    </div>
+                </div>
+
+                <div class="input-group glass-card">
+                    <label for="rate-note" class="input-label">Quick note (optional)</label>
+                    <textarea id="rate-note" class="task-input" placeholder="What did you accomplish?" rows="2" maxlength="200"></textarea>
+                </div>
+
+                <button id="btn-save-rating" class="btn-primary btn-glow btn-lg">Save & Continue →</button>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Journal                         -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-journal" class="screen">
+            <header class="screen-header">
+                <h1>Journal</h1>
+            </header>
+
+            <div class="journal-date-nav">
+                <button id="btn-journal-prev" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <span id="journal-date" class="journal-date-text">Today</span>
+                <button id="btn-journal-next" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </div>
+
+            <!-- Daily productivity bar -->
+            <div class="journal-day-stat glass-card">
+                <div class="journal-day-productivity">
+                    <span id="journal-day-percent" class="journal-percent">—</span>
+                    <span class="journal-percent-label">Avg Productivity</span>
+                </div>
+                <div class="journal-day-details">
+                    <span><strong id="journal-day-blocks">0</strong> blocks</span>
+                    <span><strong id="journal-day-focus">0h</strong> focus</span>
+                    <span><strong id="journal-day-breathe">0m</strong> breathe</span>
+                </div>
+            </div>
+
+            <div id="journal-entries" class="journal-entries">
+                <div class="empty-state">
+                    <div class="empty-icon">📖</div>
+                    <p>No entries for this day</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Weekly Stats                    -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-weekly" class="screen">
+            <header class="screen-header">
+                <h1>Weekly Stats</h1>
+            </header>
+
+            <div class="weekly-nav">
+                <button id="btn-week-prev" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <span id="week-range" class="week-range-text">This Week</span>
+                <button id="btn-week-next" class="icon-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </div>
+
+            <!-- Weekly overview card -->
+            <div class="weekly-overview glass-card">
+                <div class="weekly-avg">
+                    <span id="weekly-avg-percent" class="weekly-avg-value">—</span>
+                    <span class="weekly-avg-label">Avg Productivity</span>
+                </div>
+                <div id="weekly-comparison" class="weekly-comparison"></div>
+            </div>
+
+            <!-- Daily bars chart -->
+            <div class="weekly-chart glass-card">
+                <div class="chart-bars" id="weekly-chart-bars">
+                    <div class="chart-day" data-day="Mon">
+                        <div class="chart-bar-container"><div class="chart-bar" style="height:0%"></div></div>
+                        <span class="chart-day-label">M</span>
+                    </div>
+                    <div class="chart-day" data-day="Tue">
+                        <div class="chart-bar-container"><div class="chart-bar" style="height:0%"></div></div>
+                        <span class="chart-day-label">T</span>
+                    </div>
+                    <div class="chart-day" data-day="Wed">
+                        <div class="chart-bar-container"><div class="chart-bar" style="height:0%"></div></div>
+                        <span class="chart-day-label">W</span>
+                    </div>
+                    <div class="chart-day" data-day="Thu">
+                        <div class="chart-bar-container"><div class="chart-bar" style="height:0%"></div></div>
+                        <span class="chart-day-label">T</span>
+                    </div>
+                    <div class="chart-day" data-day="Fri">
+                        <div class="chart-bar-container"><div class="chart-bar" style="height:0%"></div></div>
+                        <span class="chart-day-label">F</span>
+                    </div>
+                    <div class="chart-day" data-day="Sat">
+                        <div class="chart-bar-container"><div class="chart-bar" style="height:0%"></div></div>
+                        <span class="chart-day-label">S</span>
+                    </div>
+                    <div class="chart-day" data-day="Sun">
+                        <div class="chart-bar-container"><div class="chart-bar" style="height:0%"></div></div>
+                        <span class="chart-day-label">S</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly totals -->
+            <div class="weekly-totals glass-card">
+                <div class="weekly-total-item">
+                    <span class="weekly-total-icon">🏆</span>
+                    <div>
+                        <span class="weekly-total-value" id="weekly-best-day">—</span>
+                        <span class="weekly-total-label">Best Day</span>
+                    </div>
+                </div>
+                <div class="weekly-total-item">
+                    <span class="weekly-total-icon">📊</span>
+                    <div>
+                        <span class="weekly-total-value" id="weekly-total-blocks">0</span>
+                        <span class="weekly-total-label">Total Blocks</span>
+                    </div>
+                </div>
+                <div class="weekly-total-item">
+                    <span class="weekly-total-icon">⏱</span>
+                    <div>
+                        <span class="weekly-total-value" id="weekly-total-focus">0h</span>
+                        <span class="weekly-total-label">Focus Time</span>
+                    </div>
+                </div>
+                <div class="weekly-total-item">
+                    <span class="weekly-total-icon">🫁</span>
+                    <div>
+                        <span class="weekly-total-value" id="weekly-total-breathe">0m</span>
+                        <span class="weekly-total-label">Breathing</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Breakdown -->
+            <div class="section-header">
+                <h2>By Category This Week</h2>
+            </div>
+            <div id="weekly-category-list" class="glass-card category-budgets-card"></div>
+
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Settings                        -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-settings" class="screen">
+            <header class="screen-header">
+                <h1>Settings</h1>
+            </header>
+
+            <div class="settings-content">
+                <div class="settings-group glass-card">
+                    <h3 class="settings-group-title">Rank Goal</h3>
+                    <p class="settings-group-desc">Your target exam and daily commitment.</p>
+                    <div class="rank-settings-row">
+                        <label>Exam Name</label>
+                        <input type="text" id="rank-exam-name" placeholder="CA Final" maxlength="40">
+                    </div>
+                    <div class="rank-settings-row">
+                        <label>Target Rank</label>
+                        <input type="number" id="rank-target" min="1" max="1000" placeholder="50">
+                    </div>
+                    <div class="rank-settings-row">
+                        <label>Exam Date</label>
+                        <input type="date" id="rank-exam-date">
+                    </div>
+                    <div class="rank-settings-row">
+                        <label>Daily Study Hours</label>
+                        <input type="number" id="rank-daily-hours" min="1" max="18" step="0.5" placeholder="8">
+                    </div>
+                    <div class="rank-settings-row">
+                        <label>Weekly Test Day</label>
+                        <select id="rank-test-day">
+                            <option value="sunday">Sunday</option>
+                            <option value="monday">Monday</option>
+                            <option value="saturday">Saturday</option>
+                        </select>
+                    </div>
+                    <button id="btn-save-rank" class="btn-ghost btn-sm">Save</button>
+                </div>
+
+                <div class="settings-group glass-card">
+                    <h3 class="settings-group-title">Your Why</h3>
+                    <p class="settings-group-desc">Why does this actually matter to you? Private — shown back to you occasionally before a focus block.</p>
+                    <textarea id="setting-your-why" class="task-input" rows="2" maxlength="200" placeholder="Write it once, in your own words..."></textarea>
+                    <button id="btn-save-why" class="btn-ghost btn-sm">Save</button>
+                </div>
+
+                <div class="settings-group glass-card">
+                    <h3 class="settings-group-title">If-Then Plan</h3>
+                    <p class="settings-group-desc">When I notice I've drifted into scrolling/planning instead of starting, I will...</p>
+                    <textarea id="setting-ifthen-plan" class="task-input" rows="2" maxlength="200" placeholder="e.g. close the app and start a 10-min Tiny Start immediately"></textarea>
+                    <button id="btn-save-ifthen" class="btn-ghost btn-sm">Save</button>
+                </div>
+
+                <div class="settings-group glass-card">
+                    <h3 class="settings-group-title">Daily Category Targets</h3>
+                    <p class="settings-group-desc">Minutes per day — used for the Today by Category bars on Home.</p>
+                    <div class="budget-input-row">
+                        <label>📚 Study</label>
+                        <input type="number" id="budget-study" class="budget-input" min="0" step="10">
+                    </div>
+                    <div class="budget-input-row">
+                        <label>💼 Work</label>
+                        <input type="number" id="budget-work" class="budget-input" min="0" step="10">
+                    </div>
+                    <div class="budget-input-row">
+                        <label>🌱 Personal</label>
+                        <input type="number" id="budget-personal" class="budget-input" min="0" step="10">
+                    </div>
+                    <div class="budget-input-row">
+                        <label>✳️ Other</label>
+                        <input type="number" id="budget-other" class="budget-input" min="0" step="10">
+                    </div>
+                    <button id="btn-save-budgets" class="btn-ghost btn-sm">Save Targets</button>
+                </div>
+
+                <div class="settings-group glass-card">
+                    <h3 class="settings-group-title">Fresh Start</h3>
+                    <p class="settings-group-desc">Resets the "Day N" counter on Home. Your history and stats are never deleted — this is just a clean psychological slate, any time you want one.</p>
+                    <button id="btn-fresh-start" class="btn-ghost btn-sm">Start Fresh</button>
+                </div>
+
+                <div class="settings-group glass-card">
+                    <h3 class="settings-group-title">Notifications</h3>
+                    <div class="setting-row">
+                        <div>
+                            <span class="setting-name"><span class="setting-icon">🔔</span> Hourly Reminder</span>
+                            <span class="setting-desc">Notify every hour to start a block</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="setting-hourly-notify" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <span class="setting-name"><span class="setting-icon">🔊</span> Sound</span>
+                            <span class="setting-desc">Play sound on phase change</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="setting-sound" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <span class="setting-name"><span class="setting-icon">📳</span> Vibration</span>
+                            <span class="setting-desc">Vibrate on phase change</span>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="setting-vibration" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-group glass-card">
+                    <h3 class="settings-group-title">Breathing</h3>
+                    <div class="setting-row">
+                        <div>
+                            <span class="setting-name"><span class="setting-icon">🌬️</span> Pattern</span>
+                            <span class="setting-desc">Inhale - Hold - Exhale</span>
+                        </div>
+                        <span class="setting-value">4-7-8</span>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <span class="setting-name"><span class="setting-icon">⏱️</span> Duration</span>
+                            <span class="setting-desc">Breathing session length</span>
+                        </div>
+                        <span class="setting-value">5 min</span>
+                    </div>
+                </div>
+
+                <div class="settings-group glass-card">
+                    <h3 class="settings-group-title">AI Integration</h3>
+                    <p class="settings-group-desc">Study questions are generated by Gemini through a secure server-side function — no API key ever touches this device or your browser's storage.</p>
+                </div>
+
+                <div class="settings-group glass-card">
+                    <h3 class="settings-group-title">Data</h3>
+                    <div class="setting-row">
+                        <button id="btn-export-data" class="btn-ghost btn-sm">Export Data</button>
+                        <button id="btn-clear-data" class="btn-ghost btn-sm btn-danger">Clear All Data</button>
+                    </div>
+                </div>
+
+                <div class="app-info">
+                    <p class="app-name">Re-birth</p>
+                    <p class="app-version" id="app-version-label">v2.1.0</p>
+                </div>
+
+                <details class="settings-group glass-card diagnostics-section">
+                    <summary class="settings-group-title" style="cursor:pointer;list-style:none">Diagnostics</summary>
+                    <div id="diagnostics-content" style="margin-top:var(--space-md);font-size:var(--font-xs);color:var(--text-tertiary);word-break:break-all">
+                        <p>Loading...</p>
+                    </div>
+                </details>
+            </div>
+
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Study                          -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-study" class="screen">
+            <header class="screen-header">
+                <h1>Study</h1>
+            </header>
+
+            <!-- Study Streak -->
+            <div class="glass-card study-streak-card">
+                <span class="streak-icon">📖</span>
+                <span class="streak-value" id="study-streak-value">0</span>
+                <span class="streak-label" id="study-streak-label">Study days</span>
+            </div>
+
+            <!-- 5 Fixed Subject Cards -->
+            <div id="study-subjects-grid" class="study-subjects-grid"></div>
+
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Subject Detail (Topics List)    -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-study-subject" class="screen">
+            <header class="screen-header">
+                <button class="icon-btn back-btn" data-back="study" aria-label="Go back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <h1 id="subject-detail-name">Subject</h1>
+                <button id="btn-add-topic-toggle" class="icon-btn" aria-label="Add Topic">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+            </header>
+
+            <!-- Subject Stats -->
+            <div class="glass-card subject-stats-card">
+                <div class="subject-stat">
+                    <span class="subject-stat-value" id="subject-total-topics">0</span>
+                    <span class="subject-stat-label">Topics</span>
+                </div>
+                <div class="subject-stat">
+                    <span class="subject-stat-value" id="subject-total-pages">0</span>
+                    <span class="subject-stat-label">Pages</span>
+                </div>
+                <div class="subject-stat">
+                    <span class="subject-stat-value" id="subject-mastered-pages">0</span>
+                    <span class="subject-stat-label">Mastered</span>
+                </div>
+            </div>
+
+            <!-- New Topic Form (hidden by default) -->
+            <div id="new-topic-form" class="glass-card new-topic-form hidden">
+                <div class="input-group">
+                    <label for="input-topic-name" class="input-label">Topic Name</label>
+                    <input type="text" id="input-topic-name" class="soft-input" placeholder="e.g. GST Registration, TDS Provisions..." maxlength="80">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Upload Pages (PDF or Photos)</label>
+                    <label class="file-upload-area" id="topic-file-upload-label">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <span id="topic-file-upload-text">Tap to select files</span>
+                        <input type="file" id="input-topic-files" accept="image/*,.pdf" multiple hidden>
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button id="btn-cancel-topic" class="btn-ghost btn-sm">Cancel</button>
+                    <button id="btn-save-new-topic" class="btn-primary btn-sm" disabled>Save Topic</button>
+                </div>
+            </div>
+
+            <!-- Topics List -->
+            <div id="subject-topics-list" class="subject-topics-list">
+                <div class="empty-state" id="topics-empty-state">
+                    <div class="empty-icon">📝</div>
+                    <p class="empty-title">No topics yet</p>
+                    <p class="empty-subtitle">Add your first topic to start studying this subject.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Study Session                  -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-study-session" class="screen">
+            <header class="screen-header">
+                <button class="icon-btn back-btn" data-back="study-subject" aria-label="Go back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <div class="session-header-info">
+                    <span id="study-session-subject-name" class="session-subject-label">Subject</span>
+                    <h1 id="study-session-topic-name">Topic</h1>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span id="study-session-page-num" class="study-page-num">1 / 5</span>
+                    <label id="btn-add-pages-anytime" class="icon-btn" for="input-add-pages-anytime" role="button" tabindex="0" aria-label="Add more pages" title="Add more pages">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </label>
+                    <input type="file" id="input-add-pages-anytime" class="visually-hidden-file-input" accept="image/*,.pdf" multiple>
+                </div>
+            </header>
+
+            <!-- Page Viewer -->
+            <div class="study-page-viewer">
+                <img id="study-session-page-img" class="study-page-img" alt="Study page">
+                <div id="study-page-loading" class="study-page-loading hidden">
+                    <div class="loading-spinner"></div>
+                    <span>Loading page...</span>
+                </div>
+            </div>
+
+            <!-- Page Nav -->
+            <div class="study-page-nav">
+                <button id="btn-study-prev-page" class="btn-ghost btn-sm" disabled>← Prev</button>
+                <span id="study-page-status" class="study-page-status">Not started</span>
+                <button id="btn-study-next-page" class="btn-ghost btn-sm" disabled>Next →</button>
+            </div>
+
+            <!-- Question Area -->
+            <div id="study-question-area" class="study-question-area">
+                <button id="btn-get-questions" class="btn-primary btn-glow">🧠 Get Questions from AI</button>
+
+                <!-- Conversation Thread -->
+                <div id="study-conversation-thread" class="study-conversation"></div>
+
+                <!-- Answer Input -->
+                <div id="study-answer-form" class="study-answer-form hidden">
+                    <textarea id="input-study-answer" class="task-input" placeholder="Type your answer..." rows="3" maxlength="1000"></textarea>
+                    <button id="btn-submit-answer" class="btn-primary btn-sm">Submit Answer →</button>
+                </div>
+
+                <!-- Status Messages -->
+                <div id="study-mastery-status" class="study-mastery-status hidden">
+                    <div class="mastery-icon">🏆</div>
+                    <p class="mastery-text">Mastery Confirmed!</p>
+                    <p class="mastery-sub">You've demonstrated deep understanding of this page.</p>
+                </div>
+            </div>
+
+            <!-- Rating Form (shown after mastery) -->
+            <div id="study-rating-form" class="glass-card study-rating-form hidden">
+                <label class="input-label">Rate your understanding</label>
+                <div class="star-rating" id="study-rating-stars">
+                    <button class="star-btn" data-star="1">★</button>
+                    <button class="star-btn" data-star="2">★</button>
+                    <button class="star-btn" data-star="3">★</button>
+                    <button class="star-btn" data-star="4">★</button>
+                    <button class="star-btn" data-star="5">★</button>
+                </div>
+                <textarea id="input-study-notes" class="task-input" placeholder="Notes about this page (optional)" rows="2" maxlength="300"></textarea>
+                <button id="btn-save-study-rating" class="btn-primary btn-glow">Save & Continue →</button>
+            </div>
+
+            <!-- Add More Pages — unlimited, reachable after every page and anytime via the + button -->
+            <div id="study-add-pages-section" class="glass-card study-add-pages-section hidden">
+                <div class="add-pages-header">
+                    <span class="add-pages-icon" id="add-pages-icon">🎉</span>
+                    <p class="add-pages-title" id="add-pages-title">All pages mastered!</p>
+                    <p class="add-pages-sub" id="add-pages-sub">Upload more pages to continue your journey.</p>
+                </div>
+                <label class="file-upload-area" id="add-pages-upload-label">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span id="add-pages-upload-text">Tap to select more pages</span>
+                    <input type="file" id="input-add-pages-files" accept="image/*,.pdf" multiple hidden>
+                </label>
+                <button id="btn-add-pages-save" class="btn-primary btn-glow btn-sm" disabled>Upload & Continue →</button>
+                <button id="btn-continue-next-page" class="btn-ghost btn-sm hidden">Continue to Next Page →</button>
+                <button id="btn-close-add-pages" class="btn-ghost btn-sm hidden">Close</button>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SCREEN: Breathe Free (Standalone)       -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="screen-breathe-free" class="screen">
+            <header class="screen-header breathe-header">
+                <button class="icon-btn back-btn" id="bf-back-btn" aria-label="Go back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <h1>4-7-8 Breathing</h1>
+                <div style="width:40px"></div>
+            </header>
+
+            <div class="breathe-content breathe-free-content">
+                <div id="bf-breathing-container" class="breathing-container-free">
+                    <div class="outer-ring-free">
+                        <svg class="progress-ring-free" viewBox="0 0 300 300">
+                            <circle class="progress-bg" cx="150" cy="150" r="140"/>
+                            <circle id="bf-progress-circle" class="progress-fg" cx="150" cy="150" r="140"/>
+                        </svg>
+                    </div>
+                    <div id="bf-breathing-circle" class="breathing-circle-free">
+                        <div class="glow-ring-free"></div>
+                        <div class="inner-circle-free">
+                            <div id="bf-phase-label" class="phase-label-free">INHALE</div>
+                            <div id="bf-countdown" class="countdown-free">4</div>
+                            <div id="bf-instruction" class="instruction-free">Breathe in slowly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bf-phase-dots" class="phase-dots-free">
+                    <div class="phase-dot active" data-phase="inhale">
+                        <span class="dot"></span>
+                        <span class="dot-label">Inhale · 4s</span>
+                    </div>
+                    <div class="phase-dot" data-phase="hold">
+                        <span class="dot"></span>
+                        <span class="dot-label">Hold · 7s</span>
+                    </div>
+                    <div class="phase-dot" data-phase="exhale">
+                        <span class="dot"></span>
+                        <span class="dot-label">Exhale · 8s</span>
+                    </div>
+                </div>
+
+                <div class="breathe-free-cycles glass-card">
+                    <span class="bf-cycles-icon">🫁</span>
+                    <span class="bf-cycles-label">Cycles: </span>
+                    <span id="bf-cycle-count" class="bf-cycles-value">0</span>
+                </div>
+            </div>
+
+        </section>
+
+
+    <!-- ======================================= -->
+    <!-- SCREEN: Sadhana                         -->
+    <!-- ======================================= -->
+    <section id="screen-sadhana" class="screen">
+        <header class="screen-header">
+            <h1>Sadhana</h1>
+            <button class="icon-btn" id="btn-sadhana-settings" aria-label="Sadhana Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </button>
+        </header>
+        <div id="sadhana-today-content"></div>
+    </section>
+
+    <!-- ======================================= -->
+    <!-- SCREEN: Sadhana Runner (placeholder)    -->
+    <!-- ======================================= -->
+    <section id="screen-sadhana-runner" class="screen no-nav">
+        <header class="screen-header">
+            <button class="icon-btn back-btn" data-back="sadhana" aria-label="Go back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h1 id="sadhana-runner-title">Practice</h1>
+            <div style="width:40px"></div>
+        </header>
+        <div id="sadhana-runner-content">
+            <p style="text-align:center;color:var(--text-secondary);padding:var(--space-2xl)">Practice runner coming in Milestone B</p>
+        </div>
+    </section>
+    <!-- Shared Bottom Nav (outside all screens, positioned against #app) -->
+    <nav id="main-bottom-nav" class="bottom-nav">
+        <button class="nav-item" data-screen="dashboard">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" data-screen="journal">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
+            <span>Journal</span>
+        </button>
+        <button class="nav-item" data-screen="weekly">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+            <span>Stats</span>
+        </button>
+        <button class="nav-item" data-screen="study">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>
+            <span>Study</span>
+        </button>
+        <button class="nav-item" data-screen="sadhana">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            <span>Sadhana</span>
+        </button>
+        <button class="nav-item" data-screen="settings">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94a7.07 7.07 0 000-1.88l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96a7.04 7.04 0 00-1.63-.94l-.36-2.54a.48.48 0 00-.48-.41h-3.84a.48.48 0 00-.48.41l-.36 2.54a7.04 7.04 0 00-1.63.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87a.48.48 0 00.12.61l2.03 1.58a7.07 7.07 0 000 1.88l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.04.7 1.63.94l.36 2.54c.05.24.26.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54a7.04 7.04 0 001.63-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.03-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z"/></svg>
+            <span>Settings</span>
+        </button>
+    </nav>
+    </div>
+
+    <!-- Audio for notifications -->
+    <audio id="audio-chime" preload="auto">
+        <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=" type="audio/wav">
+    </audio>
+
+    <!-- pdf.js CDN removed for offline Capacitor -->
+    <script src="capacitor-notifications.js"></script>
+    <script src="app.js"></script>
+    <script src="gita.js"></script>
+    <script src="sadhana.js"></script>
+    <script src="rank.js"></script>
+    <script src="planner.js"></script>
+    <script src="mock.js"></script>
+    <script src="brahmacharya.js"></script>
+    <script src="polish.js"></script>
+</body>
+</html>

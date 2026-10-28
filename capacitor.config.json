@@ -1,0 +1,14 @@
+﻿{
+  "appId": "com.rebirth.app",
+  "appName": "Re-birth",
+  "webDir": "www/dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon",
+      "iconColor": "#6C63FF"
+    }
+  }
+}
